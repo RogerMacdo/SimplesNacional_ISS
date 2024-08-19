@@ -62,7 +62,10 @@ def calcular_aliquota_anexo_iv(receita_bruta):
             aliquota_nominal = faixa[1]
             parcela_deduzir = faixa[2]
             aliquota_efetiva = ((receita_bruta * aliquota_nominal) - parcela_deduzir) / receita_bruta * 100
-            return aliquota_efetiva
+             # Aplicar ISSQN
+            issqn = 0.325
+            aliquota_efetiva_issqn = aliquota_efetiva * issqn
+            return aliquota_efetiva_issqn
 
 def calcular_aliquota_anexo_v(receita_bruta):
     faixas = [
