@@ -16,7 +16,9 @@ Sub CalcularAliquota()
         aplicaFatorR = ws.Cells(i, 3).Value ' Supondo que o Fator R está na coluna C
 
         If aplicaFatorR Then
-            anexo = "Anexo V"
+            If aplicaFatorR >= 0.28 Then
+                anexo = "Anexo V"
+            End If
         End If
 
         aliquotaEfetiva = CalcularAliquotaEfetiva(receitaBruta, anexo)
@@ -54,8 +56,7 @@ Function CalcularAliquotaAnexoIII(receitaBruta As Double) As Double
             aliquotaNominal = faixas(i)(1)
             parcelaDeduzir = faixas(i)(2)
             aliquotaEfetiva = ((receitaBruta * aliquotaNominal) - parcelaDeduzir) / receitaBruta * 100
-            ' Aplicar ISSQN
-            CalcularAliquotaAnexoIII = aliquotaEfetiva * 0.325
+            CalcularAliquotaAnexoIII = aliquotaEfetiva
             Exit Function
         End If
     Next i
@@ -99,8 +100,7 @@ Function CalcularAliquotaAnexoV(receitaBruta As Double) As Double
             aliquotaNominal = faixas(i)(1)
             parcelaDeduzir = faixas(i)(2)
             aliquotaEfetiva = ((receitaBruta * aliquotaNominal) - parcelaDeduzir) / receitaBruta * 100
-            ' Aplicar ISSQN
-            CalcularAliquotaAnexoV = aliquotaEfetiva * 0.325
+            CalcularAliquotaAnexoV = aliquotaEfetiva
             Exit Function
         End If
     Next i
