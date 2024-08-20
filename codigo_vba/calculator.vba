@@ -4,6 +4,7 @@ Option Explicit
 Sub CalcularAliquota()
     Dim receitaBruta As Double
     Dim anexo As String
+    Dim fatorR As Double
     Dim aplicaFatorR As Boolean
     Dim aliquotaEfetiva As Double
     Dim ws As Worksheet
@@ -13,14 +14,17 @@ Sub CalcularAliquota()
     For i = 2 To ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
         receitaBruta = ws.Cells(i, 1).Value ' Supondo que a Receita Bruta está na coluna A
         anexo = ws.Cells(i, 2).Value ' Supondo que o Anexo está na coluna B
-        aplicaFatorR = ws.Cells(i, 3).Value ' Supondo que o Fator R está na coluna C
-
+        fatorR = ws.Cells(i, 3).Value ' Supondo que o Fator R está na coluna C
+        aplicaFatorR = ws.Cells(i, 4).Value ' Supondo que o checkbox Fator R está na coluna D
+        
+        ' Aplicar lógica do Fator R
         If aplicaFatorR Then
-            If aplicaFatorR >= 0.28 Then
+            If fatorR >= 0.28 Then
                 anexo = "Anexo V"
             End If
         End If
 
+        ' Calcular a alíquota efetiva
         aliquotaEfetiva = CalcularAliquotaEfetiva(receitaBruta, anexo)
         ws.Cells(i, 5).Value = Format(aliquotaEfetiva, "#.##") & "%" ' Colocando a alíquota na coluna E
     Next i
@@ -56,7 +60,15 @@ Function CalcularAliquotaAnexoIII(receitaBruta As Double) As Double
             aliquotaNominal = faixas(i)(1)
             parcelaDeduzir = faixas(i)(2)
             aliquotaEfetiva = ((receitaBruta * aliquotaNominal) - parcelaDeduzir) / receitaBruta * 100
-            CalcularAliquotaAnexoIII = aliquotaEfetiva
+            
+            ' Aplicar o ISS
+            If i = 5 And aliquotaEfetiva > 12.5 Then
+                ' Ajuste para a 5ª faixa quando a alíquota efetiva for superior a 12,5%
+                CalcularAliquotaAnexoIII = 5
+            Else
+                CalcularAliquotaAnexoIII = aliquotaEfetiva
+            End If
+            
             Exit Function
         End If
     Next i
@@ -65,9 +77,9 @@ End Function
 ' Cálculo da alíquota para o Anexo IV
 Function CalcularAliquotaAnexoIV(receitaBruta As Double) As Double
     Dim faixas As Variant
-    faixas = Array(Array(360000, 0.13, 12376), Array(720000, 0.18, 37376), _
-                   Array(1800000, 0.225, 85376), Array(3600000, 0.275, 445376), _
-                   Array(4800000, 0.33, 1045376))
+    faixas = Array(Array(180000, 0.045, 0), Array(360000, 0.09, 8100), _
+                   Array(720000, 0.102, 12420), Array(1800000, 0.14, 39780), _
+                   Array(3600000, 0.22, 183780), Array(4800000, 0.33, 828000))
 
     Dim i As Integer
     For i = LBound(faixas) To UBound(faixas)
@@ -78,7 +90,14 @@ Function CalcularAliquotaAnexoIV(receitaBruta As Double) As Double
             aliquotaNominal = faixas(i)(1)
             parcelaDeduzir = faixas(i)(2)
             aliquotaEfetiva = ((receitaBruta * aliquotaNominal) - parcelaDeduzir) / receitaBruta * 100
-            CalcularAliquotaAnexoIV = aliquotaEfetiva
+            
+            ' Ajuste para a 5ª faixa quando a alíquota efetiva for superior a 12,5%
+            If i = 5 And aliquotaEfetiva > 12.5 Then
+                CalcularAliquotaAnexoIV = 5
+            Else
+                CalcularAliquotaAnexoIV = aliquotaEfetiva
+            End If
+            
             Exit Function
         End If
     Next i
@@ -100,7 +119,15 @@ Function CalcularAliquotaAnexoV(receitaBruta As Double) As Double
             aliquotaNominal = faixas(i)(1)
             parcelaDeduzir = faixas(i)(2)
             aliquotaEfetiva = ((receitaBruta * aliquotaNominal) - parcelaDeduzir) / receitaBruta * 100
-            CalcularAliquotaAnexoV = aliquotaEfetiva
+            
+            ' Aplicar o ISS
+            If i = 5 And aliquotaEfetiva > 12.5 Then
+                ' Ajuste para a 5ª faixa quando a alíquota efetiva for superior a 12,5%
+                CalcularAliquotaAnexoV = 5
+            Else
+                CalcularAliquotaAnexoV = aliquotaEfetiva
+            End If
+            
             Exit Function
         End If
     Next i
